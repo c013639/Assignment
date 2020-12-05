@@ -1,0 +1,21 @@
+---
+- hosts: tag_k8s_master
+  become: yes
+
+  tasks:
+    - name: Retrieve helm binary archive.
+      unarchive:
+        src: https://get.helm.sh/helm-v3.2.1-linux-amd64.tar.gz
+        dest: /tmp
+        creates: /usr/local/bin/helm
+        remote_src: yes
+
+    - name: Move helm binary into place.
+      command: cp /tmp/linux-amd64/helm /usr/local/bin/helm
+      args:
+        creates: /usr/local/bin/helm
+
+    - name: Add Bitnami's chart repository.
+      community.kubernetes.helm_repository:
+        name: bitnami
+        repo_url: "https://charts.bitnami.com/bitnami"
